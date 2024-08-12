@@ -75,14 +75,9 @@ printhelp()
 #Params: isvalidfile (PATH STRING)
 isvalidfile()
 {
-	if [[ $1 =~ (\.mdl|\.vvd|\.phy|\.vtf|\.vmt|\.wav|\.ttf|\.png|\.bsp|\.ain)$ ]]; then
+	if [[ $1 =~ (\.mdl|\.vvd|\.phy|\.vtf|\.vtx|\.vmt|\.wav|\.ttf|\.png|\.bsp|\.ain)$ ]]; then
 		return 1
 	fi
-	return 0
-}
-
-GenSanitizePath()
-{
 	return 0
 }
 
@@ -116,7 +111,6 @@ file_specification() {
 }
 
 walk() {
-        local indent="${2:-0}"
 	local foldername="" # STRING
 	local ExpectedValidDepth=$(($OrgDirDepth+1)) # INT
 
@@ -155,7 +149,7 @@ walk() {
 				SanitizedPath="$SanitizedPath/$foldername"
 			fi
 
-			walk "$entry" $((indent+4))
+			walk "$entry"
 		fi
 	done
 
@@ -222,7 +216,7 @@ echo "-- Last Parse: $STAMPDATE $UNIXSTAMP" >> ${LUALOC}
 echo "" >> ${LUALOC}
 
 #Write the inital block of text for the lua script
-echo "if (SERVER)" >> ${LUALOC}
+echo "if (SERVER) then" >> ${LUALOC}
 
 #Perform the process
 walk "${ABS_PATH}"
@@ -234,7 +228,7 @@ echo "end" >> ${LUALOC}
 #	LUA WRITER END ....
 #
 
-echo -e "${GRE}Successfully written fastdl.lua${NCL}"
+echo -e "${GRE}Successfully written ${LuaFilename}${NCL}"
 
 #According to the docs https://wiki.facepunch.com/gmod/resource.AddFile theres a limit of 8192 files before workshop MUST be utilized
 echo "Total Entry Count... $FileCount\8192"
